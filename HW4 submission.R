@@ -49,6 +49,8 @@ mean(mistletoe$Seedlings)
 
 # MAE of 145.84 indicates on average the predicted seedling count differs from observed values by ~145 seedlings. Mean seedling density = 160.66 and range is from 0 to 2472 seedlings. The level of error is high but expected due to high variability in seedling counts. The large spread suggests that some trees support extremely high seedling densities, contributing to increased prediction errors.
 
+## ASW: excellent answer!!
+
 # 1b Make a marginal effects plot) and written (effect sizes on scale of response) approaches to interpret the model.
 
 preds <- predictions(mod.nbin, 
@@ -70,10 +72,12 @@ ggplot(data=preds, aes(x=Treatment, y=estimate)) + # fancy ggplot
 
 # I analyzed the relationship between tree parasitism status and the number of seedlings beneath each tree using a Generalized Linear Model (GLM) with a Negative Binomial distribution, accounting for overdispersion in seedling counts. Mistletoe infection alters seedling density (maybe). Using the intercept (2.5733) and transforming it back to scale, means that unparasitized trees have an average of ~13 seedlings beneath them. The estimate for parasitized (3.1575) status and transforming it, means parasitized trees have ~23 times more seedlings compared to unparasitized trees. The pvalue (<2e-16) indicates a highly significant effect for parasitized trees. The MAE = 145.84, which means the predicted seedling count deviated by ~146 seedlings, the range of seedlings was 0 - 2472, suggesting suggesting considerable variation in the data that the model does not fully capture. This could be an indicator of other ecological variables influencing seedling dispersion patterns. 
 
+## ASW: excellent!
+
 # 1c) 2012 was an atypically rainy year, compared to 2011, model the effect of mistletoe differs between the two years. Write ~2 new sentences that summarize the results of the new model/biological implications.
   
 # fit negative binomial GLM + year
-mod_year <- glm.nb(Seedlings ~ Treatment * Year, data = mistletoe)
+mod_nbin_year <- glm.nb(Seedlings ~ Treatment * as.factor(Year), data = mistletoe)
   
 # model summary
 summary(mod_nbin_year)
@@ -82,6 +86,10 @@ summary(mod_nbin_year)
 exp(coef(mod_nbin_year))
 
 # The model indicates that overall seedling density was significantly higher in 2012 (4.46 times higher than 2011), likely due to increased rainfall. However, the facilitative effect of mistletoe was weaker in 2012 (exp[-0.8956] = 0.41), suggesting that in wetter conditions, the relative advantage of parasitized trees for seedling recruitment is lessened, possibly because water was more readily available everywhere.
+
+## ASW: great work, Cat! 30/30
+
+
 
 # Forest thinning removes fuels from forests, 10,000 ponderosa diameters measured, some areas received thinning treatment, a wildfire burned a large sample, returned to resample the survival. Q: does thining decrease the probability of tree mortality in wildfire?
 
@@ -106,11 +114,15 @@ pred_probs <- predict(tree_mod, type = "response")
 mae <- mean(abs(treemortality$mortality - pred_probs))
 print(mae)
 
+## ASW: Something like ROC/AUC may be better fit metric for this binary outcome.
+
 # The model strongly suggests that forest thinning treatments significantly reduce tree mortality (Beta = -1.8559, p <0.001). The odds ratio of 0.156 indicates that trees in thinned areas are ~ 84% less likely to die compared to areas without the thinning treatment (1-0.156). This supports the hypothesis that thinning reduces tree mortality, potentially by decreasing the competition for resources like light, water, and nutrients. The MAE of 0.408 suggests that on average, the predicted probabilities deviate from the actual mortality outcomes by ~41%, indicating a decent level of predictive accuracy for this model.
 
 # 2b) The researchers explicitly considered the potential for confounding relationships related to tree size and randomized their post-fire sampling by tree size. Given this information, do the researchers need to incorporate tree size into their glm to accurately estimate the effect of thinning? Why or why not?
 
 # My answer is that it depends. Because the researchers explicitly randomized their post-fire sampling by tree size, they controlled for the potential confounding effect of tree size in the design. However, incorporating tree size in the model could be advantageous for these reasons: 1. for better precision: randomization controls for confounding, adding tree size as a covariate could reduce variation and improve predictive power; 2. if tree size is a significant predictor of mortality, including it might improve model fit. Short answer no.
+
+## ASW: Love it! This is great. My short answer is: You could include it for other reasons, but it's not needed to accurately estimate the effect of thinning!
 
 # 2c) Refit the model from 2a to include the necessary variables to minimize bias in our estimation of the “thinning” variable, based on the reviewer’s proposed DAG (above). Does the effect of “thinning” change? If so, describe the degree of change and why the two models may differ in their conclusions.
 
@@ -129,4 +141,8 @@ print(mae_2)
 
 # Thinning still significantly reduces tree mortality, but the effect is lessened than originally estimated. In the original model, thinning was associated with an 84% reduction in mortality (odds ratio 0.156) whereas in the adjusted model, thinning is associated with a 60% reduction in mortality (odds ratio 0.40) after accounting for slope and road distance. This change suggests that some of the initial effect of thinning was due to confounding by landscape features that influence the likelihood of thinning. Additionally, the Mean Absolute Error (MAE) improved from 0.408 to 0.162, indicating that the updated model provides a more accurate prediction of tree mortality.
 
+##ASW: Nice! See my comment about using MAE with binomial glm above. The key thing here is that slope and distance from roads are biasing the effect of thinning in the first model, making it appear more effective than it is because of the fact that thinning treatments are more likely to occur in locations where fire severity is already lower (closer to roads, on shallower slopes). 
 
+## 18/20
+
+## ASW: Great work, Cat! 48/50
